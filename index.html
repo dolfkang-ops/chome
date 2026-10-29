@@ -1,15 +1,1331 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>포레스트힐 캠핑파크 | Forest Hill Camping Park</title>
-    <!-- Pretendard Font -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  </head>
-  <body class="bg-camp-warm text-gray-800 antialiased font-sans selection:bg-forest-500 selection:text-white">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포레스트힐 캠핑파크 | Forest Hill Camping Park</title>
+  
+  <!-- Pretendard 웹폰트 -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  
+  <!-- 컴파일된 순수 프로덕션 CSS (경고 없음 / 빠른 로딩) -->
+  <link rel="stylesheet" href="./style.css">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #9cc2b1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4e8671; }
+  </style>
+</head>
+<body class="bg-camp-warm text-stone-800 antialiased font-sans selection:bg-forest-600 selection:text-white">
+
+  <!-- 1 & 2. 고정 헤더 (상단 제휴바 + 스크롤 반응형 네비게이션) -->
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <!-- 최상단 땡큐캠핑 제휴 알림바 -->
+    <div class="bg-forest-900 text-emerald-200 text-xs py-1.5 px-4 font-medium border-b border-forest-800">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full text-[11px] font-semibold border border-emerald-500/30">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+            땡큐캠핑 공식 제휴점
+          </span>
+          <span class="hidden sm:inline text-forest-200">
+            실시간 예약 및 땡큐캠핑 정책 준수 캠핑장
+          </span>
+        </div>
+        <a href="tel:010-8765-4321" class="flex items-center gap-1 text-forest-300 hover:text-white transition">
+          <i data-lucide="phone-call" class="w-3 h-3"></i>
+          <span>예약문의: 010-8765-4321</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 스크롤 감지 반응형 내비게이션 바 -->
+    <nav id="main-nav" class="transition-all duration-300 bg-gradient-to-b from-stone-950/80 via-stone-950/40 to-transparent py-4 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <!-- 로고 -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-forest-600 flex items-center justify-center text-white shadow-lg shadow-forest-900/20 group-hover:bg-forest-500 transition">
+            <i data-lucide="tent" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-xl font-bold tracking-tight block leading-tight font-sans">
+              포레스트힐 캠핑파크
+            </span>
+            <span id="logo-sub" class="text-[10px] tracking-widest uppercase font-semibold text-emerald-300 transition-colors">
+              FOREST HILL CAMPING PARK
+            </span>
+          </div>
+        </a>
+
+        <!-- 데스크톱 메뉴 링크들 -->
+        <div id="nav-links" class="hidden lg:flex items-center gap-6 text-sm font-medium text-stone-100">
+          <a href="#story" class="hover:text-white transition">캠핑장 소개</a>
+          <a href="#zones" class="hover:text-white transition">사이트 안내</a>
+          <a href="#sitemap" class="hover:text-white transition">배치도</a>
+          <a href="#facilities" class="hover:text-white transition">부대시설</a>
+          <a href="#attractions" class="hover:text-white transition">주변 관광지</a>
+          <a href="#policy" class="hover:text-white transition">이용수칙</a>
+          <a href="#gallery" class="hover:text-white transition">갤러리</a>
+          <a href="#location" class="hover:text-white transition">오시는 길</a>
+        </div>
+
+        <!-- 우측 실시간 예약 버튼 -->
+        <div class="hidden sm:flex items-center gap-3">
+          <button onclick="openBookingModal()" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-forest-600 hover:from-emerald-500 hover:to-forest-500 text-white font-semibold text-sm px-4 py-2.5 rounded-full shadow-lg shadow-emerald-700/25 transition transform hover:-translate-y-0.5">
+            <i data-lucide="calendar-check" class="w-4 h-4"></i>
+            <span>실시간 예약하기</span>
+          </button>
+        </div>
+
+        <!-- 모바일 햄버거 토글 -->
+        <button id="mobile-toggle-btn" onclick="toggleMobileMenu()" class="p-2 rounded-lg lg:hidden text-white hover:bg-white/10 transition" aria-label="메뉴 열기">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- 모바일 드롭다운 메뉴 -->
+      <div id="mobile-menu" class="hidden lg:hidden bg-white text-stone-900 border-b border-stone-200 px-4 pt-3 pb-6 space-y-3 shadow-xl mt-3">
+        <div class="grid grid-cols-2 gap-2 text-sm font-medium text-stone-700 pb-3 border-b border-stone-100">
+          <a href="#story" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">캠핑장 소개</a>
+          <a href="#zones" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">사이트 안내</a>
+          <a href="#sitemap" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">배치도</a>
+          <a href="#facilities" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">부대시설</a>
+          <a href="#attractions" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">주변 관광지</a>
+          <a href="#policy" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">이용수칙</a>
+          <a href="#gallery" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">갤러리</a>
+          <a href="#location" onclick="toggleMobileMenu()" class="px-3 py-2 rounded-lg hover:bg-forest-50">오시는 길</a>
+        </div>
+        <button onclick="toggleMobileMenu(); openBookingModal()" class="w-full py-3 bg-forest-600 hover:bg-forest-700 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-md">
+          <i data-lucide="calendar-check" class="w-4 h-4"></i>
+          실시간 예약 바로가기
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- 3. 메인 히어로 섹션 -->
+  <section class="relative min-h-screen flex flex-col justify-between pt-24 pb-12 overflow-hidden bg-stone-950">
+    <!-- 배경 이미지 슬라이더 -->
+    <div class="absolute inset-0">
+      <img id="hero-img" src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=1920&auto=format&fit=crop" alt="포레스트힐 전경" class="w-full h-full object-cover brightness-50 transition-all duration-1000">
+      <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-black/60"></div>
+    </div>
+
+    <!-- 중앙 히어로 카피 -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto py-8 text-center text-white">
+      <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full text-xs font-medium mb-6 text-emerald-300">
+        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+        <span>땡큐캠핑(ThankQ) 공식 제휴 캠핑파크</span>
+        <span class="text-white/40">•</span>
+        <span class="flex items-center gap-1 text-stone-200">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-400"></i> 강원도 춘천 남산면
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight max-w-4xl mx-auto">
+        울창한 숲속, 별빛 아래서 피어나는 온전한 쉼
+      </h1>
+      <p class="mt-4 sm:mt-6 text-base sm:text-xl text-stone-200 font-light max-w-2xl mx-auto leading-relaxed">
+        수령 40년 잣나무 군락지에서 즐기는 프라이빗 오토캠핑 & 럭셔리 글램핑
+      </p>
+
+      <!-- 4대 특징 칩 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto mt-8 text-xs sm:text-sm text-stone-200">
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-2 rounded-xl flex items-center justify-center gap-2">
+          <i data-lucide="volume-x" class="w-4 h-4 text-emerald-300"></i>
+          <span>22시 매너타임 준수</span>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-2 rounded-xl flex items-center justify-center gap-2">
+          <i data-lucide="flame" class="w-4 h-4 text-orange-400"></i>
+          <span>개별 화로 & 600W 분전함</span>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-2 rounded-xl flex items-center justify-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+          <span>24시간 온수 샤워실</span>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-2 rounded-xl flex items-center justify-center gap-2">
+          <i data-lucide="wifi" class="w-4 h-4 text-blue-300"></i>
+          <span>전 구역 기가 와이파이</span>
+        </div>
+      </div>
+
+      <!-- CTA 버튼 -->
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <button onclick="openBookingModal()" class="px-8 py-3.5 rounded-full bg-forest-500 hover:bg-forest-600 text-white font-bold text-base shadow-xl transition transform hover:-translate-y-0.5 flex items-center gap-2">
+          <i data-lucide="calendar-check" class="w-5 h-5"></i>
+          <span>실시간 예약하기</span>
+        </button>
+        <a href="#zones" class="px-6 py-3.5 rounded-full bg-white/20 hover:bg-white/30 text-white font-semibold text-base backdrop-blur-md border border-white/30 transition">
+          사이트 둘러보기
+        </a>
+      </div>
+    </div>
+
+    <!-- 하단 퀵 예약 위젯 바 -->
+    <div class="relative z-10 w-full px-4 sm:px-6 lg:px-8 mt-auto">
+      <div class="max-w-5xl mx-auto bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-4 sm:p-6 border border-white/40 text-stone-800">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-stone-200">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+              실시간 예약 및 잔여석 조회
+            </span>
+          </div>
+          <span class="text-xs text-stone-500 hidden sm:inline">
+            ※ 당일 및 주말 예약은 조기 마감될 수 있습니다
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-stone-600 flex items-center gap-1.5">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-forest-600"></i>
+              체크인 / 체크아웃
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="date" id="quick-in" class="w-full text-xs font-medium border border-stone-300 rounded-xl px-2.5 py-2.5 bg-stone-50">
+              <input type="date" id="quick-out" class="w-full text-xs font-medium border border-stone-300 rounded-xl px-2.5 py-2.5 bg-stone-50">
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-stone-600 flex items-center gap-1.5">
+              <i data-lucide="tent" class="w-3.5 h-3.5 text-forest-600"></i>
+              사이트 유형
+            </label>
+            <select id="quick-zone" class="w-full text-sm font-medium border border-stone-300 rounded-xl px-3 py-2.5 bg-stone-50">
+              <option value="all">전체 사이트 / 객실</option>
+              <option value="deck">포레스트 데크 (A구역)</option>
+              <option value="autocamping">밸리 파쇄석 (B구역)</option>
+              <option value="glamping">노블 글램핑 (C구역)</option>
+              <option value="caravan">루프탑 카라반 (D구역)</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-stone-600 flex items-center gap-1.5">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-forest-600"></i>
+              이용 인원
+            </label>
+            <select id="quick-guests" class="w-full text-sm font-medium border border-stone-300 rounded-xl px-3 py-2.5 bg-stone-50">
+              <option value="2">성인 2명 (기준)</option>
+              <option value="3">3명</option>
+              <option value="4">4명 (가족)</option>
+              <option value="5">5명 (최대)</option>
+            </select>
+          </div>
+
+          <div class="flex items-end">
+            <button onclick="openBookingModal()" class="w-full bg-forest-600 hover:bg-forest-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 transition">
+              <i data-lucide="search" class="w-4 h-4"></i>
+              <span>실시간 잔여석 조회</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 캠핑장 소개 (스토리) -->
+  <section id="story" class="py-24 bg-stone-50 text-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-forest-600 bg-forest-100 px-3 py-1 rounded-full">
+          ABOUT OUR CAMPSITE
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+          자연이 주는 가장 깨끗한 선물, <br class="hidden sm:inline">
+          <span class="text-forest-600">포레스트힐 캠핑파크</span>에서 시작됩니다
+        </h2>
+        <p class="mt-4 text-base sm:text-lg text-stone-600 leading-relaxed font-normal">
+          우리는 텐트를 치는 행위를 넘어, 자연과 온전히 교감하는 쉼의 공간을 만듭니다.
+          자연을 훼손하지 않는 친환경 캠핑과 머무는 동안의 최고의 쾌적함을 약속드립니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-6 relative">
+          <div class="relative rounded-3xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1510312305653-8ed496efae75?q=80&w=1200&auto=format&fit=crop" alt="포레스트힐 전경" class="w-full h-[440px] object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-stone-900/70 via-transparent to-transparent"></div>
+            <div class="absolute bottom-6 left-6 right-6 text-white">
+              <span class="bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase">Eco-friendly</span>
+              <h3 class="text-xl font-bold mt-2">사계절이 아름다운 잣나무 숲속 야영장</h3>
+              <p class="text-xs sm:text-sm text-stone-200 mt-1">봄의 벚꽃, 여름의 청정 계곡, 가을의 잣나무 단풍, 겨울의 은빛 설경</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm">
+              <div class="w-12 h-12 rounded-xl bg-forest-50 text-forest-600 flex items-center justify-center mb-4">
+                <i data-lucide="trees" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-base font-bold text-stone-900 mb-2">수령 40년 잣나무 군락지</h3>
+              <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">피톤치드가 가득한 자연림 속에서 머무는 것만으로도 도심의 피로가 씻겨 내려갑니다.</p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm">
+              <div class="w-12 h-12 rounded-xl bg-forest-50 text-forest-600 flex items-center justify-center mb-4">
+                <i data-lucide="droplets" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-base font-bold text-stone-900 mb-2">사계절 맑은 1급수 계곡</h3>
+              <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">캠핑장 부지와 바로 연결된 완경사 계곡은 여름철 아이들의 안전한 물놀이장입니다.</p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm">
+              <div class="w-12 h-12 rounded-xl bg-forest-50 text-forest-600 flex items-center justify-center mb-4">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-base font-bold text-stone-900 mb-2">호텔급 위생 & 24시간 온수</h3>
+              <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">매일 수시 소독을 진행하며, 개별 부스 샤워장과 비데, 파우더룸을 완비했습니다.</p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm">
+              <div class="w-12 h-12 rounded-xl bg-forest-50 text-forest-600 flex items-center justify-center mb-4">
+                <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-base font-bold text-stone-900 mb-2">지자체 정식 인가 야영장</h3>
+              <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">영업배상책임보험 및 화재보험 가입 완료로 온 가족이 안심하고 힐링할 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 캠핑장 전체 배치도 (인터랙티브 맵) -->
+  <section id="sitemap" class="py-20 bg-stone-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 border border-emerald-800/80 px-3 py-1 rounded-full">
+          CAMPING MAP & LAYOUT
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">
+          캠핑장 전체 배치도 & 구역 안내
+        </h2>
+        <p class="mt-3 text-stone-400 text-sm sm:text-base">
+          원하시는 구역을 클릭하시면 위치 및 세부 사양을 확인하실 수 있습니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-8 bg-stone-800 rounded-3xl p-4 sm:p-6 border border-stone-700 shadow-2xl relative">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-stone-700">
+            <span class="text-xs font-semibold text-stone-300 flex items-center gap-1.5">
+              <i data-lucide="compass" class="w-4 h-4 text-emerald-400"></i>
+              포레스트힐 입체 조감도 (북향)
+            </span>
+            <div class="flex gap-3 text-xs">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>데크</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>파쇄석</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>글램핑</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>카라반</span>
+            </div>
+          </div>
+
+          <!-- 그래픽 맵 시뮬레이션 -->
+          <div class="relative w-full aspect-[16/10] bg-gradient-to-br from-stone-900 to-forest-950 rounded-2xl border border-stone-700 overflow-hidden flex items-center justify-center p-4">
+            <div class="absolute top-0 left-0 right-0 h-12 bg-cyan-900/40 border-b border-cyan-500/30 flex items-center px-6 text-cyan-300 text-xs font-bold">
+              🌊 맑은 청정 계곡 물놀이 구역 (수심 30~80cm)
+            </div>
+
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-28 bg-stone-800/90 border border-stone-600 rounded-2xl flex flex-col items-center justify-center text-center p-2">
+              <span class="text-amber-400 font-bold text-xs">중앙 관리동 & 매점</span>
+              <span class="text-[10px] text-stone-400 mt-1">샤워실 • 화장실 • 개수대</span>
+            </div>
+
+            <!-- 구역 인터랙티브 버튼들 -->
+            <button onclick="selectSiteMapZone('zone-a')" class="absolute top-16 left-6 sm:left-12 p-3 sm:p-4 rounded-xl bg-emerald-950/90 border-2 border-emerald-500 text-left hover:scale-105 transition shadow">
+              <div class="text-xs font-bold text-emerald-200">A구역 데크존</div>
+              <div class="text-[10px] text-emerald-300">숲속 단독 사이트 (8석)</div>
+            </button>
+
+            <button onclick="selectSiteMapZone('zone-b')" class="absolute top-16 right-6 sm:right-12 p-3 sm:p-4 rounded-xl bg-amber-950/90 border-2 border-amber-500 text-left hover:scale-105 transition shadow">
+              <div class="text-xs font-bold text-amber-200">B구역 계곡 파쇄석</div>
+              <div class="text-[10px] text-amber-300">오토캠핑/차박 (12석)</div>
+            </button>
+
+            <button onclick="selectSiteMapZone('zone-c')" class="absolute bottom-6 left-6 sm:left-12 p-3 sm:p-4 rounded-xl bg-purple-950/90 border-2 border-purple-500 text-left hover:scale-105 transition shadow">
+              <div class="text-xs font-bold text-purple-200">C구역 글램핑</div>
+              <div class="text-[10px] text-purple-300">호텔식 개별욕실 (5동)</div>
+            </button>
+
+            <button onclick="selectSiteMapZone('zone-d')" class="absolute bottom-6 right-6 sm:right-12 p-3 sm:p-4 rounded-xl bg-blue-950/90 border-2 border-blue-500 text-left hover:scale-105 transition shadow">
+              <div class="text-xs font-bold text-blue-200">D구역 카라반</div>
+              <div class="text-[10px] text-blue-300">루프탑 테라스 (4동)</div>
+            </button>
+          </div>
+          <p class="text-xs text-stone-400 text-center mt-3">※ 각 구역을 클릭하시면 우측에서 상세 사양을 확인하실 수 있습니다.</p>
+        </div>
+
+        <!-- 우측 구역 상세 안내 카드 -->
+        <div class="lg:col-span-4 bg-stone-800/90 rounded-3xl p-6 border border-stone-700 shadow-xl space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-stone-700">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">선택된 구역 정보</span>
+            <span id="map-zone-badge" class="text-xs bg-stone-700 text-stone-200 px-2.5 py-0.5 rounded-full font-medium">숲속 프리미엄 데크</span>
+          </div>
+
+          <div class="rounded-2xl overflow-hidden aspect-video relative">
+            <img id="map-zone-img" src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=1200&auto=format&fit=crop" alt="구역 이미지" class="w-full h-full object-cover">
+          </div>
+
+          <div>
+            <h3 id="map-zone-name" class="text-xl font-bold text-white">포레스트 데크 사이트 (A구역)</h3>
+            <p id="map-zone-desc" class="text-xs text-stone-400 mt-1">잣나무 그늘 아래 넓은 원목 데크에서 즐기는 피톤치드 힐링</p>
+          </div>
+
+          <div class="space-y-2 text-xs text-stone-300 bg-stone-900/60 p-4 rounded-2xl border border-stone-700">
+            <div class="flex justify-between py-1 border-b border-stone-800">
+              <span class="text-stone-400">구역 크기</span>
+              <span id="map-zone-size" class="font-semibold text-white">6m x 8m (원목 방부목 데크)</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-stone-800">
+              <span class="text-stone-400">수용 인원</span>
+              <span id="map-zone-capacity" class="font-semibold text-white">기준 4인 / 최대 5인</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="text-stone-400">이용 요금</span>
+              <span id="map-zone-price" class="font-bold text-emerald-400">55,000원 ~ (1박)</span>
+            </div>
+          </div>
+
+          <button onclick="openBookingModal()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm shadow transition flex items-center justify-center gap-2">
+            <span>실시간 예약하기</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 4가지 사이트 상세 안내 & 요금표 -->
+  <section id="zones" class="py-24 bg-camp-warm text-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
+          CAMPING SITES & STAY
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+          자연을 품은 특별한 4가지 사이트
+        </h2>
+        <p class="mt-3 text-stone-600 text-sm sm:text-base">
+          숲속 데크부터 계곡 파쇄석, 호텔식 글램핑, 이색 카라반까지 취향에 맞는 최고의 힐링 공간을 선택해보세요.
+        </p>
+      </div>
+
+      <!-- 4대 사이트 카드 그리드 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Site 1: 데크 (A) -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-md flex flex-col">
+          <div class="relative h-64 sm:h-72 overflow-hidden cursor-pointer" onclick="openImageModal('https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=1200&auto=format&fit=crop', '포레스트 데크 사이트')">
+            <img src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=1200&auto=format&fit=crop" alt="A구역 데크" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="bg-forest-600 text-white text-xs font-bold px-3 py-1 rounded-full">숲속 프리미엄 데크</span>
+              <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">가장 인기있는 뷰</span>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 text-white drop-shadow-md">
+              <h3 class="text-2xl font-bold">포레스트 데크 사이트 (A구역)</h3>
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-5">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+              수령 40년 잣나무 그늘 아래 독립적으로 배치된 사이트입니다. 대형 거실형 텐트 피칭이 가능한 넉넉한 사이즈와 바로 앞 숲 조망을 자랑합니다.
+            </p>
+            <div class="grid grid-cols-2 gap-3 text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
+              <div><span class="text-stone-400 block text-[10px]">사이즈/바닥</span><span class="font-semibold">6m x 8m 고급 방부목</span></div>
+              <div><span class="text-stone-400 block text-[10px]">수용 인원</span><span class="font-semibold">기준 4인 / 최대 5인</span></div>
+              <div><span class="text-stone-400 block text-[10px]">전기 규격</span><span class="font-semibold">사이트 단독 600W 분전함</span></div>
+              <div><span class="text-stone-400 block text-[10px]">입/퇴실 시간</span><span class="font-semibold">14:00 / 11:00</span></div>
+            </div>
+            <div class="pt-4 border-t border-stone-200 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-stone-400 block">1박 이용요금</span>
+                <span class="text-2xl font-black text-forest-800">55,000원<span class="text-sm font-normal text-stone-600">~ (주말 65,000원)</span></span>
+              </div>
+              <button onclick="openBookingModal()" class="px-5 py-2.5 bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow transition">
+                예약하기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Site 2: 파쇄석 (B) -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-md flex flex-col">
+          <div class="relative h-64 sm:h-72 overflow-hidden cursor-pointer" onclick="openImageModal('https://images.unsplash.com/photo-1510312305653-8ed496efae75?q=80&w=1200&auto=format&fit=crop', '밸리 파쇄석 오토캠핑')">
+            <img src="https://images.unsplash.com/photo-1510312305653-8ed496efae75?q=80&w=1200&auto=format&fit=crop" alt="B구역 파쇄석" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="bg-forest-600 text-white text-xs font-bold px-3 py-1 rounded-full">계곡 뷰 파쇄석</span>
+              <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">계곡 물소리 명당</span>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 text-white drop-shadow-md">
+              <h3 class="text-2xl font-bold">밸리 파쇄석 오토캠핑 (B구역)</h3>
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-5">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+              물놀이 계곡과 맞닿아 있어 인기가 가장 높은 사이트입니다. 차량 진입 및 차박 텐트, 트레일러 진입이 수월한 최고급 세척 파쇄석입니다.
+            </p>
+            <div class="grid grid-cols-2 gap-3 text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
+              <div><span class="text-stone-400 block text-[10px]">사이즈/바닥</span><span class="font-semibold">8m x 10m 최고급 파쇄석</span></div>
+              <div><span class="text-stone-400 block text-[10px]">수용 인원</span><span class="font-semibold">기준 4인 / 최대 6인</span></div>
+              <div><span class="text-stone-400 block text-[10px]">전기 규격</span><span class="font-semibold">사이트 단독 600W 분전함</span></div>
+              <div><span class="text-stone-400 block text-[10px]">차박/트레일러</span><span class="font-semibold">진입 가능</span></div>
+            </div>
+            <div class="pt-4 border-t border-stone-200 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-stone-400 block">1박 이용요금</span>
+                <span class="text-2xl font-black text-forest-800">50,000원<span class="text-sm font-normal text-stone-600">~ (주말 60,000원)</span></span>
+              </div>
+              <button onclick="openBookingModal()" class="px-5 py-2.5 bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow transition">
+                예약하기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Site 3: 글램핑 (C) -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-md flex flex-col">
+          <div class="relative h-64 sm:h-72 overflow-hidden cursor-pointer" onclick="openImageModal('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=1200&auto=format&fit=crop', '노블 글램핑 스위트')">
+            <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=1200&auto=format&fit=crop" alt="C구역 글램핑" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="bg-purple-700 text-white text-xs font-bold px-3 py-1 rounded-full">호텔식 럭셔리 글램핑</span>
+              <span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">개별 화장실/샤워실</span>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 text-white drop-shadow-md">
+              <h3 class="text-2xl font-bold">노블 글램핑 스위트 (C구역)</h3>
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-5">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+              장비 없이 몸만 와서 즐기는 감성 캠핑입니다. 호텔식 침구류, 사계절 냉난방기, 개별 온수 욕실, 냉장고, 전용 바비큐 테라스를 완비했습니다.
+            </p>
+            <div class="grid grid-cols-2 gap-3 text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
+              <div><span class="text-stone-400 block text-[10px]">실내 면적</span><span class="font-semibold">실내 28㎡ + 테라스 15㎡</span></div>
+              <div><span class="text-stone-400 block text-[10px]">수용 인원</span><span class="font-semibold">기준 2인 / 최대 4인</span></div>
+              <div><span class="text-stone-400 block text-[10px]">주요 설비</span><span class="font-semibold">개별 화장실, 에어컨, 난방</span></div>
+              <div><span class="text-stone-400 block text-[10px]">침구류</span><span class="font-semibold">호텔식 퀸사이즈 침대</span></div>
+            </div>
+            <div class="pt-4 border-t border-stone-200 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-stone-400 block">1박 이용요금</span>
+                <span class="text-2xl font-black text-forest-800">140,000원<span class="text-sm font-normal text-stone-600">~ (주말 190,000원)</span></span>
+              </div>
+              <button onclick="openBookingModal()" class="px-5 py-2.5 bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow transition">
+                예약하기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Site 4: 카라반 (D) -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-md flex flex-col">
+          <div class="relative h-64 sm:h-72 overflow-hidden cursor-pointer" onclick="openImageModal('https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=1200&auto=format&fit=crop', '루프탑 감성 카라반')">
+            <img src="https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=1200&auto=format&fit=crop" alt="D구역 카라반" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+            <div class="absolute top-4 left-4 flex gap-2">
+              <span class="bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full">유러피안 감성 카라반</span>
+              <span class="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full">별빛 루프 테라스</span>
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 text-white drop-shadow-md">
+              <h3 class="text-2xl font-bold">루프탑 감성 카라반 (D구역)</h3>
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-5">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+              감성적인 레트로 인테리어와 현대적 편의성이 결합된 카라반입니다. 옥상 별빛 테라스에서 커피 한잔과 밤하늘 별자리를 관측할 수 있습니다.
+            </p>
+            <div class="grid grid-cols-2 gap-3 text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
+              <div><span class="text-stone-400 block text-[10px]">차량 제원</span><span class="font-semibold">길이 7.5m 광폭 카라반</span></div>
+              <div><span class="text-stone-400 block text-[10px]">수용 인원</span><span class="font-semibold">기준 2인 / 최대 3인</span></div>
+              <div><span class="text-stone-400 block text-[10px]">내부 설비</span><span class="font-semibold">실내 주방, 샤워부스, 오디오</span></div>
+              <div><span class="text-stone-400 block text-[10px]">특화 시설</span><span class="font-semibold">루프탑 전망 관측석</span></div>
+            </div>
+            <div class="pt-4 border-t border-stone-200 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-stone-400 block">1박 이용요금</span>
+                <span class="text-2xl font-black text-forest-800">120,000원<span class="text-sm font-normal text-stone-600">~ (주말 170,000원)</span></span>
+              </div>
+              <button onclick="openBookingModal()" class="px-5 py-2.5 bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow transition">
+                예약하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 부대시설 안내 -->
+  <section id="facilities" class="py-24 bg-white text-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
+          FACILITIES
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+          불편함 없는 완벽한 부대시설
+        </h2>
+        <p class="mt-3 text-stone-600 text-sm sm:text-base">
+          자연 속에서도 집처럼 편리하고 청결한 환경을 제공하기 위해 세심하게 준비했습니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 시설 1 -->
+        <div class="bg-stone-50 rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop" alt="매점" class="w-full h-48 object-cover">
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs text-forest-600 font-semibold mb-1">
+                <i data-lucide="store" class="w-4 h-4"></i>
+                <span>편의시설 • 08:00 ~ 22:00</span>
+              </div>
+              <h3 class="text-lg font-bold text-stone-900">중앙 관리동 & 무인 편의점</h3>
+              <p class="text-xs text-stone-600 mt-2">참나무 장작, 숯, 석쇠, 부탄가스, 얼음, 음료 및 비상 상비약을 구비하고 있습니다.</p>
+            </div>
+            <div class="text-xs text-stone-500 pt-2 border-t border-stone-200">✓ 장작 판매 ✓ 전자레인지 3대 ✓ 커피머신</div>
+          </div>
+        </div>
+
+        <!-- 시설 2 -->
+        <div class="bg-stone-50 rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop" alt="샤워실" class="w-full h-48 object-cover">
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs text-forest-600 font-semibold mb-1">
+                <i data-lucide="droplets" class="w-4 h-4"></i>
+                <span>위생시설 • 24시간 항시 운영</span>
+              </div>
+              <h3 class="text-lg font-bold text-stone-900">호텔급 24시간 온수 샤워실</h3>
+              <p class="text-xs text-stone-600 mt-2">개별 칸막이와 드라이기, 바디워시를 갖춘 쾌적하고 위생적인 온수 전용 샤워장입니다.</p>
+            </div>
+            <div class="text-xs text-stone-500 pt-2 border-t border-stone-200">✓ 고압 온수 상시 공급 ✓ 파우더룸 비치 ✓ 비데 설치</div>
+          </div>
+        </div>
+
+        <!-- 시설 3 -->
+        <div class="bg-stone-50 rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=800&auto=format&fit=crop" alt="개수대" class="w-full h-48 object-cover">
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs text-forest-600 font-semibold mb-1">
+                <i data-lucide="utensils" class="w-4 h-4"></i>
+                <span>조리시설 • 07:00 ~ 23:00</span>
+              </div>
+              <h3 class="text-lg font-bold text-stone-900">실내 개수대 & 공용 냉장고</h3>
+              <p class="text-xs text-stone-600 mt-2">온수 수전과 친환경 주방세제, 신선 보관용 대형 공용 냉장고가 완비되어 있습니다.</p>
+            </div>
+            <div class="text-xs text-stone-500 pt-2 border-t border-stone-200">✓ 온수 공급 ✓ 공용 냉장/냉동고 ✓ 음식물 탈수기</div>
+          </div>
+        </div>
+
+        <!-- 시설 4 -->
+        <div class="bg-stone-50 rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=800&auto=format&fit=crop" alt="계곡 물놀이터" class="w-full h-48 object-cover">
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs text-forest-600 font-semibold mb-1">
+                <i data-lucide="trees" class="w-4 h-4"></i>
+                <span>자연/레저 • 일출 ~ 일몰</span>
+              </div>
+              <h3 class="text-lg font-bold text-stone-900">천연 계곡 물놀이터 & 숲길</h3>
+              <p class="text-xs text-stone-600 mt-2">캠핑장 바로 앞 맑은 수심 30~80cm의 천연 계곡과 잣나무 둘레길(1.5km)이 조성되어 있습니다.</p>
+            </div>
+            <div class="text-xs text-stone-500 pt-2 border-t border-stone-200">✓ 완경사 안전 계곡 ✓ 구명조끼 대여 ✓ 힐링 산책로</div>
+          </div>
+        </div>
+
+        <!-- 시설 5 -->
+        <div class="bg-stone-50 rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <img src="https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=800&auto=format&fit=crop" alt="잔디광장" class="w-full h-48 object-cover">
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs text-forest-600 font-semibold mb-1">
+                <i data-lucide="flame" class="w-4 h-4"></i>
+                <span>레크레이션 • 09:00 ~ 21:30</span>
+              </div>
+              <h3 class="text-lg font-bold text-stone-900">잔디 놀이마당 & 모닥불 광장</h3>
+              <p class="text-xs text-stone-600 mt-2">아이들이 안전하게 뛰어놀 수 있는 천연 잔디광장과 밤이 되면 켜지는 대형 중앙 화로대입니다.</p>
+            </div>
+            <div class="text-xs text-stone-500 pt-2 border-t border-stone-200">✓ 배드민턴 네트 ✓ 저녁 모닥불 불멍타임 ✓ 안전 펜스</div>
+          </div>
+        </div>
+
+        <!-- 시설 6 -->
+        <div class="bg-stone-50 rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=800&auto=format&fit=crop" alt="전기차 충전소" class="w-full h-48 object-cover">
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs text-forest-600 font-semibold mb-1">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span>편의시설 • 24시간 운영</span>
+              </div>
+              <h3 class="text-lg font-bold text-stone-900">전기차 완속 충전소 (2기)</h3>
+              <p class="text-xs text-stone-600 mt-2">캠핑 중 편안하게 완속 충전할 수 있는 최신 완속 충전기 2기를 지원합니다.</p>
+            </div>
+            <div class="text-xs text-stone-500 pt-2 border-t border-stone-200">✓ 7kW 완속 충전 2대 ✓ 회원카드 및 앱 결제 지원</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. 이용수칙 및 환불 규정 -->
+  <section id="policy" class="py-24 bg-stone-50 text-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
+          CAMPING RULES
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+          이용수칙
+        </h2>
+        <p class="mt-3 text-stone-600 text-sm sm:text-base">
+          모두가 쾌적하고 안전한 캠핑을 누릴 수 있도록 정해진 규칙을 꼭 지켜주시기 바랍니다.
+        </p>
+      </div>
+
+      <!-- 4대 수칙 카드 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-forest-50 text-forest-700 flex items-center justify-center">
+              <i data-lucide="clock" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-stone-900">입실 / 퇴실 시간 준수</h3>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-stone-600">
+            <li class="flex items-center gap-2">✓ 입실: 오후 14:00부터 가능 (얼리 체크인은 사전 문의 요망)</li>
+            <li class="flex items-center gap-2">✓ 퇴실: 오전 11:00까지 (다음 이용객을 위한 정비 시간 준수)</li>
+            <li class="flex items-center gap-2">✓ 입실 시 관리동에서 예약자 본인 확인 후 쓰레기봉투 수령 필수</li>
+          </ul>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-forest-50 text-forest-700 flex items-center justify-center">
+              <i data-lucide="volume-x" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-stone-900">매너타임 안내 (22:00 ~ 08:00)</h3>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-stone-600">
+            <li class="flex items-center gap-2">✓ 오후 10시 이후는 이웃 캠퍼의 온전한 수면을 위한 매너타임입니다.</li>
+            <li class="flex items-center gap-2">✓ 블루투스 스피커, 빔프로젝터 음향 사용 금지 및 모닥불 조기 정리</li>
+            <li class="flex items-center gap-2">✓ 2회 이상 소음 민원 누적 시 환불 없이 퇴실 조치될 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-forest-50 text-forest-700 flex items-center justify-center">
+              <i data-lucide="shield-alert" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-stone-900">화재 안전 및 전기 사용 수칙</h3>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-stone-600">
+            <li class="flex items-center gap-2">✓ 텐트 내부에서의 숯, 번개탄, 등유 난로 무단 사용 절대 금지</li>
+            <li class="flex items-center gap-2">✓ 화로대 사용 시 반드시 받침대를 사용하며 재는 잔불 수거통에 폐기</li>
+            <li class="flex items-center gap-2">✓ 사이트당 소비전력은 600W 이하 준수 (고출력 온풍기 반입 제한)</li>
+          </ul>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-forest-50 text-forest-700 flex items-center justify-center">
+              <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-stone-900">반려동물 및 분리수거 수칙</h3>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-stone-600">
+            <li class="flex items-center gap-2">✓ 반려동물은 B구역(파쇄석)에 한해 10kg 이하 소형견 허용 (목줄 필수)</li>
+            <li class="flex items-center gap-2">✓ 발생한 쓰레기는 관리동 옆 분리수거장에 재활용/일반/음식물 분리 배출</li>
+            <li class="flex items-center gap-2">✓ 자연을 사랑하는 클린 캠퍼가 되어주세요.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 환불 규정 테이블 -->
+      <div class="bg-white rounded-3xl p-6 sm:p-10 border border-stone-200 shadow-lg">
+        <h3 class="text-xl sm:text-2xl font-bold text-stone-900 mb-2">예약 취소 및 환불 기준</h3>
+        <p class="text-xs text-stone-500 mb-6">올바른 예약 문화를 위해 이용일 직전 취소 시 규정에 따른 위약금이 발생합니다.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-stone-100 text-stone-700 border-b border-stone-300">
+                <th class="py-3 px-4 font-bold rounded-l-xl">취소 시점 (이용일 기준)</th>
+                <th class="py-3 px-4 font-bold">환불 비율</th>
+                <th class="py-3 px-4 font-bold rounded-r-xl">안내 사항</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-100">
+              <tr class="hover:bg-stone-50">
+                <td class="py-3.5 px-4 font-semibold">이용일 8일 전</td>
+                <td class="py-3.5 px-4"><span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">100% 전액 환불</span></td>
+                <td class="py-3.5 px-4 text-stone-500">취소 수수료 없음</td>
+              </tr>
+              <tr class="hover:bg-stone-50">
+                <td class="py-3.5 px-4 font-semibold">이용일 7일 전</td>
+                <td class="py-3.5 px-4"><span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">90% 환불</span></td>
+                <td class="py-3.5 px-4 text-stone-500">위약금 10% 공제</td>
+              </tr>
+              <tr class="hover:bg-stone-50">
+                <td class="py-3.5 px-4 font-semibold">이용일 5~6일 전</td>
+                <td class="py-3.5 px-4"><span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">70% 환불</span></td>
+                <td class="py-3.5 px-4 text-stone-500">위약금 30% 공제</td>
+              </tr>
+              <tr class="hover:bg-stone-50">
+                <td class="py-3.5 px-4 font-semibold">이용일 3~4일 전</td>
+                <td class="py-3.5 px-4"><span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">50% 환불</span></td>
+                <td class="py-3.5 px-4 text-stone-500">위약금 50% 공제</td>
+              </tr>
+              <tr class="hover:bg-stone-50">
+                <td class="py-3.5 px-4 font-semibold">이용일 1~2일 전</td>
+                <td class="py-3.5 px-4"><span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">20% 환불</span></td>
+                <td class="py-3.5 px-4 text-stone-500">위약금 80% 공제</td>
+              </tr>
+              <tr class="hover:bg-stone-50">
+                <td class="py-3.5 px-4 font-semibold">이용 당일 취소</td>
+                <td class="py-3.5 px-4"><span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded">환불 불가 (0%)</span></td>
+                <td class="py-3.5 px-4 text-stone-500">기상특보(호우/태풍 등) 발효 시 100% 전액 환불</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. 주변 관광지 및 장보기 가이드 -->
+  <section id="attractions" class="py-24 bg-camp-warm text-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
+          LOCAL ATTRACTIONS
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+          캠핑과 함께 즐기는 주변 명소 & 생활 편의
+        </h2>
+        <p class="mt-3 text-stone-600 text-sm sm:text-base">
+          차량 20분 이내의 수려한 자연 명소, 맛집 카페, 장보기 마트 및 응급 병원 안내입니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 관광지 1 -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <div class="relative h-52 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?q=80&w=800&auto=format&fit=crop" alt="구곡폭포" class="w-full h-full object-cover">
+            <div class="absolute top-3 left-3 bg-stone-900/80 text-white text-xs font-bold px-2.5 py-1 rounded-lg">차량 12분 (7.5km)</div>
+            <div class="absolute top-3 right-3 bg-forest-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">자연 명소</div>
+            <div class="absolute bottom-3 left-3 right-3 text-white font-bold text-lg">강촌 문배마을 & 구곡폭포</div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">50m 높이에서 쏟아지는 시원한 구곡폭포와 문배마을의 토속 산채비빔밥을 맛볼 수 있는 대표 힐링 코스입니다.</p>
+            <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-900">💡 <strong>팁:</strong> 캠핑 체크인 전 가벼운 트레킹 코스로 추천합니다.</div>
+          </div>
+        </div>
+
+        <!-- 관광지 2 -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <div class="relative h-52 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=800&auto=format&fit=crop" alt="레일바이크" class="w-full h-full object-cover">
+            <div class="absolute top-3 left-3 bg-stone-900/80 text-white text-xs font-bold px-2.5 py-1 rounded-lg">차량 15분 (11km)</div>
+            <div class="absolute top-3 right-3 bg-forest-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">액티비티</div>
+            <div class="absolute bottom-3 left-3 right-3 text-white font-bold text-lg">강촌 레일바이크</div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">북한강 절경과 신비로운 테마 터널을 지나며 달리는 인기 액티비티로 연인, 가족에게 최고의 추억을 선사합니다.</p>
+            <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-900">💡 <strong>팁:</strong> 주말에는 조기 매진되므로 사전 온라인 예약을 권장합니다.</div>
+          </div>
+        </div>
+
+        <!-- 관광지 3 -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <div class="relative h-52 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop" alt="카페" class="w-full h-full object-cover">
+            <div class="absolute top-3 left-3 bg-stone-900/80 text-white text-xs font-bold px-2.5 py-1 rounded-lg">차량 9분 (5.8km)</div>
+            <div class="absolute top-3 right-3 bg-forest-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">감성 카페</div>
+            <div class="absolute bottom-3 left-3 right-3 text-white font-bold text-lg">베이커리 카페 '어반그린'</div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">탁 트인 북한강 리버뷰를 바라보며 매일 구워내는 천연 발효빵과 스페셜티 커피를 즐길 수 있는 핫플레이스입니다.</p>
+            <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-900">💡 <strong>팁:</strong> 야외 테라스석 포토존에서 인생샷을 남겨보세요.</div>
+          </div>
+        </div>
+
+        <!-- 관광지 4 (마트) -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <div class="relative h-52 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=800&auto=format&fit=crop" alt="하나로마트" class="w-full h-full object-cover">
+            <div class="absolute top-3 left-3 bg-stone-900/80 text-white text-xs font-bold px-2.5 py-1 rounded-lg">차량 7분 (4.2km)</div>
+            <div class="absolute top-3 right-3 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">장보기 마트</div>
+            <div class="absolute bottom-3 left-3 right-3 text-white font-bold text-lg">강촌 하나로마트 (남산농협)</div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">신선한 한우, 삼겹살, 제철 쌈채소, 로컬 특산품 및 숯/장작/주류를 저렴하게 구매할 수 있습니다.</p>
+            <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-900">💡 <strong>팁:</strong> 매일 08:30 ~ 21:00 영업하며 춘천 잣 막걸리를 추천합니다.</div>
+          </div>
+        </div>
+
+        <!-- 관광지 5 -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <div class="relative h-52 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop" alt="남이섬" class="w-full h-full object-cover">
+            <div class="absolute top-3 left-3 bg-stone-900/80 text-white text-xs font-bold px-2.5 py-1 rounded-lg">차량 18분 (14km)</div>
+            <div class="absolute top-3 right-3 bg-forest-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">관광 명소</div>
+            <div class="absolute bottom-3 left-3 right-3 text-white font-bold text-lg">남이섬 & 짚와이어</div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">메타세콰이어길과 은행나무길로 유명한 대표 관광지로 사계절 이색적인 자연 풍광을 자랑합니다.</p>
+            <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-900">💡 <strong>팁:</strong> 퇴실 후 아침 일찍 방문하시면 한적하게 관람할 수 있습니다.</div>
+          </div>
+        </div>
+
+        <!-- 관광지 6 (병원) -->
+        <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-sm flex flex-col">
+          <div class="relative h-52 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop" alt="병원" class="w-full h-full object-cover">
+            <div class="absolute top-3 left-3 bg-stone-900/80 text-white text-xs font-bold px-2.5 py-1 rounded-lg">차량 22분 (18km)</div>
+            <div class="absolute top-3 right-3 bg-rose-600 text-white text-xs font-semibold px-2.5 py-1 rounded-lg">응급 의료</div>
+            <div class="absolute bottom-3 left-3 right-3 text-white font-bold text-lg">춘천 강남병원 응급의료센터</div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-3">
+            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">캠핑 중 야간 안전사고나 심야 응급 상황 발생 시 24시간 진료가 가능한 종합병원 응급실입니다.</p>
+            <div class="p-3 bg-amber-50 rounded-xl text-xs text-amber-900">💡 <strong>안내:</strong> 전화 033-240-7000 (응급실 24시간 당직의 상주)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. 감성 포토 갤러리 -->
+  <section id="gallery" class="py-24 bg-white text-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
+          PHOTO GALLERY
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+          포레스트힐의 사계절 감성 갤러리
+        </h2>
+        <p class="mt-3 text-stone-600 text-sm sm:text-base">
+          자연과 함께 숨 쉬는 캠핑장의 순간들을 담았습니다. 사진을 클릭하시면 크게 보실 수 있습니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div onclick="openImageModal('https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=1200&auto=format&fit=crop', '석양 무렵의 감성 캠프파이어')" class="relative h-72 rounded-3xl overflow-hidden cursor-pointer group shadow hover:shadow-xl transition">
+          <img src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=1200&auto=format&fit=crop" alt="불멍" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <div class="absolute inset-0 bg-stone-950/30 group-hover:bg-stone-950/60 transition"></div>
+          <div class="absolute bottom-4 left-4 text-white"><h4 class="font-bold">석양 무렵의 감성 캠프파이어</h4></div>
+        </div>
+
+        <div onclick="openImageModal('https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=1200&auto=format&fit=crop', '잣나무 숲속 텐트 피칭')" class="relative h-72 rounded-3xl overflow-hidden cursor-pointer group shadow hover:shadow-xl transition">
+          <img src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=1200&auto=format&fit=crop" alt="데크" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <div class="absolute inset-0 bg-stone-950/30 group-hover:bg-stone-950/60 transition"></div>
+          <div class="absolute bottom-4 left-4 text-white"><h4 class="font-bold">피톤치드 가득한 잣나무 숲속 텐트</h4></div>
+        </div>
+
+        <div onclick="openImageModal('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=1200&auto=format&fit=crop', '글램핑 야경')" class="relative h-72 rounded-3xl overflow-hidden cursor-pointer group shadow hover:shadow-xl transition">
+          <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=1200&auto=format&fit=crop" alt="글램핑" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <div class="absolute inset-0 bg-stone-950/30 group-hover:bg-stone-950/60 transition"></div>
+          <div class="absolute bottom-4 left-4 text-white"><h4 class="font-bold">프리미엄 럭셔리 글램핑 야경</h4></div>
+        </div>
+
+        <div onclick="openImageModal('https://images.unsplash.com/photo-1510312305653-8ed496efae75?q=80&w=1200&auto=format&fit=crop', '여름 계곡 풍경')" class="relative h-72 rounded-3xl overflow-hidden cursor-pointer group shadow hover:shadow-xl transition">
+          <img src="https://images.unsplash.com/photo-1510312305653-8ed496efae75?q=80&w=1200&auto=format&fit=crop" alt="계곡" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <div class="absolute inset-0 bg-stone-950/30 group-hover:bg-stone-950/60 transition"></div>
+          <div class="absolute bottom-4 left-4 text-white"><h4 class="font-bold">시원한 물소리가 흐르는 여름 계곡</h4></div>
+        </div>
+
+        <div onclick="openImageModal('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop', '밤하늘 은하수와 별빛')" class="relative h-72 rounded-3xl overflow-hidden cursor-pointer group shadow hover:shadow-xl transition">
+          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop" alt="별빛 은하수" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <div class="absolute inset-0 bg-stone-950/30 group-hover:bg-stone-950/60 transition"></div>
+          <div class="absolute bottom-4 left-4 text-white"><h4 class="font-bold">밤하늘 쏟아지는 은하수와 별빛</h4></div>
+        </div>
+
+        <div onclick="openImageModal('https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=1200&auto=format&fit=crop', '감성 카라반 풍경')" class="relative h-72 rounded-3xl overflow-hidden cursor-pointer group shadow hover:shadow-xl transition">
+          <img src="https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=1200&auto=format&fit=crop" alt="카라반" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+          <div class="absolute inset-0 bg-stone-950/30 group-hover:bg-stone-950/60 transition"></div>
+          <div class="absolute bottom-4 left-4 text-white"><h4 class="font-bold">숲속 루프탑 감성 카라반 스테이</h4></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. 오시는 길 & 실시간 날씨 & 고객센터 -->
+  <section id="location" class="py-24 bg-camp-warm text-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold uppercase tracking-widest text-forest-700 bg-forest-100 px-3 py-1 rounded-full">
+          LOCATION & CONTACT
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+          오시는 길 & 이용 문의
+        </h2>
+        <p class="mt-3 text-stone-600 text-sm sm:text-base">
+          서울 강남 기준 1시간 10분, 북한강의 수려한 드라이브 코스를 따라 편안하게 오실 수 있습니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm space-y-6">
+          <div class="relative aspect-[16/9] rounded-2xl overflow-hidden border border-stone-300">
+            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1200&auto=format&fit=crop" alt="지도 위치" class="w-full h-full object-cover brightness-90">
+            <div class="absolute inset-0 bg-stone-900/40 flex flex-col items-center justify-center text-white text-center p-4">
+              <div class="w-12 h-12 rounded-full bg-forest-600 text-white flex items-center justify-center shadow-lg mb-2">
+                <i data-lucide="map-pin" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-xl font-bold">포레스트힐 캠핑파크</h3>
+              <p class="text-xs text-stone-200 mt-1">강원특별자치도 춘천시 남산면 잣나무숲길 128</p>
+              
+              <div class="mt-4 flex gap-2">
+                <a href="https://map.naver.com" target="_blank" class="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg shadow">네이버 지도</a>
+                <a href="https://map.kakao.com" target="_blank" class="px-3 py-1.5 bg-amber-400 text-stone-900 text-xs font-bold rounded-lg shadow">카카오맵</a>
+                <a href="https://tmap.life" target="_blank" class="px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg shadow">티맵(T-map)</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 도로명 주소 복사 바 -->
+          <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <span class="text-[10px] text-stone-400 uppercase tracking-wider block font-semibold">내비게이션 주소</span>
+              <span class="text-sm font-bold text-stone-800">강원특별자치도 춘천시 남산면 잣나무숲길 128</span>
+            </div>
+            <button onclick="copyAddress()" class="px-4 py-2 bg-white hover:bg-stone-100 border border-stone-300 text-stone-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+              <span id="copy-btn-text">주소 복사</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 우측: 날씨 & 전화문의 카드 -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-gradient-to-br from-blue-900 via-indigo-900 to-stone-900 text-white p-6 rounded-3xl shadow-xl">
+            <div class="flex items-center justify-between pb-3 border-b border-blue-700/60">
+              <span class="text-xs font-bold text-blue-200 flex items-center gap-1.5">
+                <i data-lucide="cloud-sun" class="w-4 h-4 text-amber-300"></i>
+                캠핑장 실시간 기상 현황
+              </span>
+              <span class="text-xs text-blue-300">춘천 남산면</span>
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+              <div>
+                <div class="text-4xl font-black">21°C</div>
+                <div class="text-xs text-blue-200 mt-1">맑음 • 야외 캠핑 최적</div>
+              </div>
+              <div class="text-right text-xs text-blue-200 space-y-1">
+                <div>바람: 1.2 m/s (미풍)</div>
+                <div>습도: 48% • 강수: 0%</div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-blue-800 text-[11px] text-blue-200/80">
+              ※ 바람이 강하지 않아 타프 및 텐트 피칭에 아주 좋습니다.
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 border border-stone-200 space-y-4">
+            <h3 class="text-lg font-bold text-stone-900">직통 전화 및 고객센터</h3>
+            <a href="tel:010-8765-4321" class="flex items-center justify-between p-4 bg-stone-50 rounded-2xl hover:border-forest-500 border border-stone-200 transition">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-forest-50 text-forest-700 flex items-center justify-center">
+                  <i data-lucide="phone" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-stone-500">관리실 직통 번호</div>
+                  <div class="text-base font-bold text-stone-900">010-8765-4321</div>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-forest-600 bg-forest-50 px-3 py-1 rounded-lg">전화걸기</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. 푸터 -->
+  <footer class="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-stone-800">
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-forest-600 flex items-center justify-center text-white">
+              <i data-lucide="tent" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h3 class="text-white font-bold text-lg">포레스트힐 캠핑파크</h3>
+              <p class="text-xs text-stone-400">FOREST HILL CAMPING PARK</p>
+            </div>
+          </div>
+          <p class="text-sm text-stone-400 leading-relaxed">
+            맑은 잣나무 숲과 1급수 계곡을 품은 프리미엄 힐링 오토캠핑 & 감성 글램핑
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase">고객센터</h4>
+          <div class="text-2xl font-bold text-emerald-400">010-8765-4321</div>
+          <p class="text-xs text-stone-400">운영시간: 매일 09:00 ~ 19:00</p>
+          <div class="text-xs text-stone-400 space-y-1">
+            <div>체크인 14:00 / 체크아웃 11:00</div>
+            <div>매너타임 22:00 ~ 08:00</div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase">빠른 메뉴</h4>
+          <ul class="space-y-2 text-sm text-stone-400">
+            <li><a href="#story" class="hover:text-white">캠핑장 소개</a></li>
+            <li><a href="#zones" class="hover:text-white">사이트 및 요금 안내</a></li>
+            <li><a href="#policy" class="hover:text-white">이용수칙</a></li>
+            <li><a href="#attractions" class="hover:text-white">주변 관광지 & 마트</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-white font-semibold text-sm tracking-wider uppercase">위치 정보</h4>
+          <div class="text-xs text-stone-400 leading-relaxed space-y-1">
+            <p class="text-stone-300 font-medium">강원특별자치도 춘천시 남산면 잣나무숲길 128</p>
+            <p>서울-양양고속도로 강촌IC에서 약 12분 직진</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-8 text-xs text-stone-500 space-y-2">
+        <div>상호명: 포레스트힐 캠핑파크 | 대표자: 홍길동 | 사업자등록번호: 123-45-67890 | 지자체 야영장업 등록번호: 제2024-52호</div>
+        <div class="flex justify-between items-center pt-2">
+          <span>© 2026 포레스트힐 캠핑파크. All rights reserved.</span>
+          <div class="space-x-3">
+            <a href="#policy" class="hover:text-stone-300">이용약관</a>
+            <a href="#policy" class="hover:text-stone-300">개인정보처리방침</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 플로팅 액션 버튼 -->
+  <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="w-10 h-10 rounded-full bg-white/90 text-stone-700 shadow-lg border border-stone-200 flex items-center justify-center hover:bg-white transition" aria-label="맨 위로">
+      <i data-lucide="chevron-up" class="w-5 h-5"></i>
+    </button>
+    <button onclick="openBookingModal()" class="px-5 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-2xl flex items-center gap-2 transition transform hover:scale-105">
+      <i data-lucide="calendar-check" class="w-4 h-4"></i>
+      <span>실시간 예약</span>
+    </button>
+  </div>
+
+  <!-- 예약 팝업 모달 -->
+  <div id="booking-modal" class="fixed inset-0 z-50 hidden bg-stone-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-200 text-stone-800">
+      <div class="bg-forest-900 text-white p-5 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="calendar-check" class="w-5 h-5 text-emerald-400"></i>
+          <h3 class="text-lg font-bold">캠핑장 실시간 예약하기</h3>
+        </div>
+        <button onclick="closeBookingModal()" class="p-1 rounded-lg text-stone-400 hover:text-white">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4 text-xs sm:text-sm">
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">예약 사이트 선택</label>
+          <select id="modal-site-select" class="w-full p-2.5 border border-stone-300 rounded-xl bg-stone-50">
+            <option value="55000">포레스트 데크 (A구역) - 55,000원</option>
+            <option value="50000">밸리 파쇄석 (B구역) - 50,000원</option>
+            <option value="140000">노블 글램핑 (C구역) - 140,000원</option>
+            <option value="120000">루프탑 카라반 (D구역) - 120,000원</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">체크인 날짜</label>
+            <input type="date" id="modal-date" class="w-full p-2.5 border border-stone-300 rounded-xl bg-stone-50">
+          </div>
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">숙박 기간</label>
+            <select class="w-full p-2.5 border border-stone-300 rounded-xl bg-stone-50">
+              <option>1박 2일</option>
+              <option>2박 3일</option>
+            </select>
+          </div>
+        </div>
+        <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 leading-relaxed text-xs">
+          <strong>안내:</strong> 실시간 예약 링크 클릭 시 안전 결제 창으로 연결되어 즉시 확정 예약이 완료됩니다.
+        </div>
+      </div>
+      <div class="bg-stone-100 p-4 flex justify-end gap-3 border-t border-stone-200">
+        <button onclick="closeBookingModal()" class="px-4 py-2 font-semibold text-stone-600 hover:text-stone-900">닫기</button>
+        <button onclick="alert('선택하신 일정으로 실시간 예약창에 연결됩니다.'); closeBookingModal()" class="px-5 py-2.5 bg-forest-600 hover:bg-forest-700 text-white font-bold rounded-xl shadow">예약 진행하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 이미지 확대 모달 -->
+  <div id="image-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onclick="closeImageModal()">
+    <div class="relative max-w-4xl w-full bg-stone-900 rounded-3xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+      <button onclick="closeImageModal()" class="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/60 text-white">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      <div class="aspect-video w-full bg-black flex items-center justify-center">
+        <img id="modal-preview-img" src="" alt="확대 미리보기" class="w-full h-full object-contain">
+      </div>
+      <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
+        <h4 id="modal-preview-title" class="text-base font-bold"></h4>
+        <span class="text-xs text-stone-400">포레스트힐 갤러리</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 간단한 인터랙티브 스크립트 -->
+  <script>
+    // Lucide 아이콘 렌더링
+    lucide.createIcons();
+
+    // 오늘/내일 날짜 세팅
+    const today = new Date().toISOString().split('T')[0];
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+    document.getElementById('quick-in').value = today;
+    document.getElementById('quick-out').value = tomorrow;
+    document.getElementById('modal-date').value = today;
+
+    // 모바일 메뉴 토글
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    // 예약 모달 열기/닫기
+    function openBookingModal() {
+      document.getElementById('booking-modal').classList.remove('hidden');
+    }
+    function closeBookingModal() {
+      document.getElementById('booking-modal').classList.add('hidden');
+    }
+
+    // 이미지 확대 모달 열기/닫기
+    function openImageModal(url, title) {
+      document.getElementById('modal-preview-img').src = url;
+      document.getElementById('modal-preview-title').innerText = title;
+      document.getElementById('image-modal').classList.remove('hidden');
+    }
+    function closeImageModal() {
+      document.getElementById('image-modal').classList.add('hidden');
+    }
+
+    // 주소 복사
+    function copyAddress() {
+      navigator.clipboard.writeText('강원특별자치도 춘천시 남산면 잣나무숲길 128');
+      const btn = document.getElementById('copy-btn-text');
+      btn.innerText = '복사 완료!';
+      setTimeout(() => btn.innerText = '주소 복사', 2000);
+    }
+
+    // 스크롤 감지 헤더 인터랙션 (투명 그라데이션 <-> 화이트 블러 전환)
+    const mainNav = document.getElementById('main-nav');
+    const logoSub = document.getElementById('logo-sub');
+    const navLinks = document.getElementById('nav-links').querySelectorAll('a');
+    const mobileToggleBtn = document.getElementById('mobile-toggle-btn');
+
+    function handleScroll() {
+      if (window.scrollY > 30) {
+        mainNav.classList.remove('bg-gradient-to-b', 'from-stone-950/80', 'via-stone-950/40', 'to-transparent', 'py-4', 'text-white');
+        mainNav.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-md', 'py-3', 'text-stone-900');
+        
+        logoSub.classList.remove('text-emerald-300');
+        logoSub.classList.add('text-forest-700');
+
+        navLinks.forEach(link => {
+          link.classList.remove('text-stone-100', 'hover:text-white');
+          link.classList.add('text-stone-700', 'hover:text-forest-600');
+        });
+
+        if (mobileToggleBtn) {
+          mobileToggleBtn.classList.remove('text-white', 'hover:bg-white/10');
+          mobileToggleBtn.classList.add('text-stone-800', 'hover:bg-stone-100');
+        }
+      } else {
+        mainNav.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-md', 'py-3', 'text-stone-900');
+        mainNav.classList.add('bg-gradient-to-b', 'from-stone-950/80', 'via-stone-950/40', 'to-transparent', 'py-4', 'text-white');
+        
+        logoSub.classList.remove('text-forest-700');
+        logoSub.classList.add('text-emerald-300');
+
+        navLinks.forEach(link => {
+          link.classList.remove('text-stone-700', 'hover:text-forest-600');
+          link.classList.add('text-stone-100', 'hover:text-white');
+        });
+
+        if (mobileToggleBtn) {
+          mobileToggleBtn.classList.remove('text-stone-800', 'hover:bg-stone-100');
+          mobileToggleBtn.classList.add('text-white', 'hover:bg-white/10');
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    // 사이트맵 구역 선택
+    const zonesData = {
+      'zone-a': {
+        name: '포레스트 데크 사이트 (A구역)',
+        badge: '숲속 프리미엄 데크',
+        desc: '잣나무 그늘 아래 넓은 원목 데크에서 즐기는 피톤치드 힐링',
+        size: '6m x 8m (원목 방부목 데크)',
+        capacity: '기준 4인 / 최대 5인',
+        price: '55,000원 ~ (1박)',
+        img: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=1200&auto=format&fit=crop'
+      },
+      'zone-b': {
+        name: '밸리 파쇄석 오토캠핑 (B구역)',
+        badge: '계곡 뷰 파쇄석',
+        desc: '시원한 계곡 물소리와 함께하는 차박 & 오토캠핑 전용 공간',
+        size: '8m x 10m (최고급 세척 파쇄석)',
+        capacity: '기준 4인 / 최대 6인',
+        price: '50,000원 ~ (1박)',
+        img: 'https://images.unsplash.com/photo-1510312305653-8ed496efae75?q=80&w=1200&auto=format&fit=crop'
+      },
+      'zone-c': {
+        name: '노블 글램핑 스위트 (C구역)',
+        badge: '호텔식 럭셔리 글램핑',
+        desc: '장비 없이 떠나는 감성 캠핑, 호텔 침구류와 개별 냉난방 및 욕실',
+        size: '실내 28㎡ + 바비큐 테라스 15㎡',
+        capacity: '기준 2인 / 최대 4인',
+        price: '140,000원 ~ (1박)',
+        img: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=1200&auto=format&fit=crop'
+      },
+      'zone-d': {
+        name: '루프탑 감성 카라반 (D구역)',
+        badge: '유러피안 감성 카라반',
+        desc: '미국식 정통 와이드 카라반에서 즐기는 이색적인 로맨틱 캠핑',
+        size: '길이 7.5m 광폭 카라반 + 루프 테라스',
+        capacity: '기준 2인 / 최대 3인',
+        price: '120,000원 ~ (1박)',
+        img: 'https://images.unsplash.com/photo-1527786356703-4b100091cd2c?q=80&w=1200&auto=format&fit=crop'
+      }
+    };
+
+    function selectSiteMapZone(zoneId) {
+      const data = zonesData[zoneId];
+      if (!data) return;
+      document.getElementById('map-zone-name').innerText = data.name;
+      document.getElementById('map-zone-badge').innerText = data.badge;
+      document.getElementById('map-zone-desc').innerText = data.desc;
+      document.getElementById('map-zone-size').innerText = data.size;
+      document.getElementById('map-zone-capacity').innerText = data.capacity;
+      document.getElementById('map-zone-price').innerText = data.price;
+      document.getElementById('map-zone-img').src = data.img;
+    }
+  </script>
+</body>
 </html>
